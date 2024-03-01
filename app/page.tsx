@@ -16,6 +16,7 @@ export type TTodos = {
 
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [completedToDos, setCompletedToDos] = useState([]);
   const [userInput, setUserInput] = useState<string>("");
 
   const addTodos = (event) => {
@@ -43,7 +44,14 @@ export default function Home() {
     setTodos(remove);
   };
 
-  console.log("todos", todos);
+  const completeToDo = (id: number) => {
+    const completed = todos.filter((item) => item.id === id);
+    const newList = todos.filter((item) => item.id !== id);
+    setCompletedToDos([...completedToDos, ...completed]);
+    setTodos(newList);
+  };
+
+  // LEFT OFF - can add items to completed list and dletes them from to do list, BUT need to be able to click on completed items and that shows the finished items. Can also then click back using STATE.  Some cool animations would be nice.
 
   return (
     <main className="container mx-auto flex mt-40 flex-col items-center justify-center ">
@@ -58,12 +66,19 @@ export default function Home() {
         <Button type="submit">Submit</Button>
       </form>
       {todos.length > 0 ? (
-        <ToDosSection todos={todos} deleteToDo={deleteToDo} />
+        <ToDosSection
+          todos={todos}
+          deleteToDo={deleteToDo}
+          completeToDo={completeToDo}
+        />
       ) : (
         <p className="mt-10 text-sm text-slate-400 ">
           This list is empty, please add your todos
         </p>
       )}
+      <div className="text-sm border-solid border-2 border-gray p-1 cursor-pointer">
+        Completed items
+      </div>
     </main>
   );
 }

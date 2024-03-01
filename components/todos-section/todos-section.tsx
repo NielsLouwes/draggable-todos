@@ -2,11 +2,16 @@ import { Todo } from "@/app/page";
 import { Button } from "../ui/button";
 
 type ToDosSectionProps = {
-  deleteToDo: (id: any) => void;
   todos: Todo[];
+  deleteToDo: (id: any) => void;
+  completeToDo: (id: number) => void;
 };
 
-export default function ToDosSection({ todos, deleteToDo }: ToDosSectionProps) {
+export default function ToDosSection({
+  todos,
+  deleteToDo,
+  completeToDo,
+}: ToDosSectionProps) {
   return (
     <div className="mt-10 w-1/2 ">
       {todos.map((todo) => (
@@ -16,7 +21,11 @@ export default function ToDosSection({ todos, deleteToDo }: ToDosSectionProps) {
         >
           <div className="w-3/5">{todo.name}</div>
           <div>
-            <Button variant="outline" className="mr-2">
+            <Button
+              onClick={() => completeToDo(todo.id)}
+              variant="outline"
+              className="mr-2"
+            >
               Complete
             </Button>
             <Button onClick={() => deleteToDo(todo.id)}>Delete</Button>
