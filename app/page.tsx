@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import ToDosSection from "@/components/todos-section/todos-section";
 
 export default function Home() {
   const [todos, setTodos] = useState([]);
@@ -36,21 +37,7 @@ export default function Home() {
         />
         <Button type="submit">Submit</Button>
       </form>
-      {todos.length > 0 && (
-        <div className="mt-10 w-1/2 border-solid border-2 border-indigo-600">
-          {todos.map((todo) => (
-            <>
-              <div className="border-solid border-2 border-red-600 p-2 flex justify-between">
-                <div key={todo.id}>{todo.name}</div>
-                <div>
-                  <Button className="mr-2">Complete</Button>
-                  <Button>Delete</Button>
-                </div>
-              </div>
-            </>
-          ))}
-        </div>
-      )}
+      <ToDosSection todos={todos} />
     </main>
   );
 }
