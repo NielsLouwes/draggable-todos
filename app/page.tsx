@@ -5,37 +5,52 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 export default function Home() {
-  const [todo, setTodos] = useState([]);
-  const [userInput, setUserInput] = useState();
+  const [todos, setTodos] = useState([]);
+  const [userInput, setUserInput] = useState("");
 
   console.log("userInput", userInput);
-  console.log("todo", todo);
+  console.log("todos", todos);
 
-  const addTodos = () => {
+  const addTodos = (event) => {
+    event?.preventDefault();
+    if (!userInput.trim()) return; // Prevents adding empty todos
+
     const newTodoObject = {
-      id: todo.length + 1,
-      todo: userInput,
+      id: todos.length + 1,
+      name: userInput,
     };
 
-    return [...todo, newTodoObject];
+    setTodos([...todos, newTodoObject]);
+    setUserInput("");
   };
 
-  // onSubmit on form
-  // capture user input
-  // add it to a todos state
-
   return (
-    <main className="container mx-auto flex justify-center mt-40">
-      <form className="flex gap-6" action="submit" onSubmit={() => addTodos()}>
+    <main className="container mx-auto flex mt-40 flex-col items-center justify-center border-solid border-2 border-black-600">
+      <form className="flex gap-6" onSubmit={addTodos}>
         <Input
           className="w-[400px]"
           type="text"
           placeholder="Add to do"
+          value={userInput}
           onChange={(event) => setUserInput(event?.target.value)}
         />
         <Button type="submit">Submit</Button>
       </form>
-      <div></div>
+      {todos.length > 0 && (
+        <div className="mt-10 w-1/2 border-solid border-2 border-indigo-600">
+          {todos.map((todo) => (
+            <>
+              <div className="border-solid border-2 border-red-600 p-2 flex justify-between">
+                <div key={todo.id}>{todo.name}</div>
+                <div>
+                  <Button className="mr-2">Complete</Button>
+                  <Button>Delete</Button>
+                </div>
+              </div>
+            </>
+          ))}
+        </div>
+      )}
     </main>
   );
 }
