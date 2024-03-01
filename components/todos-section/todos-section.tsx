@@ -1,19 +1,25 @@
+import { Todo } from "@/app/page";
 import { Button } from "../ui/button";
 
-export default function ToDosSection({ todos }) {
+type ToDosSectionProps = {
+  deleteToDo: (id: any) => void;
+  todos: Todo[];
+};
+
+export default function ToDosSection({ todos, deleteToDo }: ToDosSectionProps) {
   return (
-    <div className="mt-10 w-1/2 border-solid border-2 border-indigo-600">
+    <div className="mt-10 w-1/2 ">
       {todos.map((todo) => (
         <div
           key={todo.id}
-          className="border-solid border-2 border-red-600 p-2 flex justify-between"
+          className="border-solid border-2 border-black-600 p-2 flex justify-between m-4 overflow-y-auto text-ellipsis whitespace-normal"
         >
-          <div>{todo.name}</div>
+          <div className="w-3/5">{todo.name}</div>
           <div>
             <Button variant="outline" className="mr-2">
               Complete
             </Button>
-            <Button>Delete</Button>
+            <Button onClick={() => deleteToDo(todo.id)}>Delete</Button>
           </div>
         </div>
       ))}

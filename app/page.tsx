@@ -5,28 +5,48 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import ToDosSection from "@/components/todos-section/todos-section";
 
-export default function Home() {
-  const [todos, setTodos] = useState([]);
-  const [userInput, setUserInput] = useState("");
+export type Todo = {
+  id: number;
+  name: string;
+};
 
-  console.log("userInput", userInput);
-  console.log("todos", todos);
+export type TTodos = {
+  todos: Todo[];
+};
+
+export default function Home() {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [userInput, setUserInput] = useState<string>("");
 
   const addTodos = (event) => {
     event?.preventDefault();
-    if (!userInput.trim()) return; // Prevents adding empty todos
+    if (!userInput.trim()) return;
+
+    const sanitisedInput = () => {
+      const capitaliseFirstLetter = userInput.charAt(0).toUpperCase();
+      const restOfInput = userInput.slice(1);
+      return `${capitaliseFirstLetter}${restOfInput}`;
+    };
 
     const newTodoObject = {
-      id: todos.length + 1,
-      name: userInput,
+      id: new Date().getTime(),
+      name: sanitisedInput(),
     };
 
     setTodos([...todos, newTodoObject]);
     setUserInput("");
   };
 
+  const deleteToDo = (id: number) => {
+    const remove = todos.filter((item) => item.id !== id);
+
+    setTodos(remove);
+  };
+
+  console.log("todos", todos);
+
   return (
-    <main className="container mx-auto flex mt-40 flex-col items-center justify-center border-solid border-2 border-black-600">
+    <main className="container mx-auto flex mt-40 flex-col items-center justify-center ">
       <form className="flex gap-6" onSubmit={addTodos}>
         <Input
           className="w-[400px]"
@@ -37,7 +57,13 @@ export default function Home() {
         />
         <Button type="submit">Submit</Button>
       </form>
-      <ToDosSection todos={todos} />
+      {todos.length > 0 ? (
+        <ToDosSection todos={todos} deleteToDo={deleteToDo} />
+      ) : (
+        <p className="mt-10 text-sm text-slate-400 ">
+          This list is empty, please add your todos
+        </p>
+      )}
     </main>
   );
 }
