@@ -2,8 +2,9 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ToDosSection from "@/components/todos-section/todos-section";
+import { capitalizeFirstLetter } from "@/lib/utils";
 
 export type Todo = {
   id: number;
@@ -20,11 +21,13 @@ export default function Home() {
   const [userInput, setUserInput] = useState<string>("");
   const [completedItemsToggle, setCompletedItemsToggle] = useState(false);
 
-  const capitalizeFirstLetter = () => {
-    const capitaliseFirstLetter = userInput.charAt(0).toUpperCase();
-    const restOfInput = userInput.slice(1);
-    return `${capitaliseFirstLetter}${restOfInput}`;
-  };
+  useEffect(() => {
+    const todosFromLocalStorage = localStorage.getItem("todos");
+
+    if (todosFromLocalStorage) {
+      setTodos(JSON.parse(todosFromLocalStorage));
+    }
+  }, []);
 
   const addTodos = (event: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
@@ -32,7 +35,7 @@ export default function Home() {
 
     const newTodoObject = {
       id: new Date().getTime(),
-      name: capitalizeFirstLetter(),
+      name: capitalizeFirstLetter(userInput),
     };
 
     setTodos([...todos, newTodoObject]);
@@ -41,10 +44,13 @@ export default function Home() {
     localStorage.setItem("todos", JSON.stringify(todos));
   };
 
+  console.log("todos", todos);
+
   const deleteToDo = (id: number) => {
     const remove = todos.filter((item) => item.id !== id);
 
     setTodos(remove);
+    localStorage.setItem("todos", JSON.stringify(remove));
   };
 
   const completeToDo = (id: number) => {
@@ -80,8 +86,9 @@ export default function Home() {
         </p>
       )}
       {completedToDos.length > 0 ? (
-        <button
-          className="text-sm border-solid border-2 border-gray cursor-pointer p-2"
+        <Button
+          variant="outline"
+          className="text-sm border-solid border-2 border-gray cursor-pointer p-2 mb-2"
           onClick={() => {
             if (completedItemsToggle) {
               setCompletedItemsToggle(false);
@@ -91,7 +98,7 @@ export default function Home() {
           }}
         >
           Completed items
-        </button>
+        </Button>
       ) : null}
       {completedItemsToggle &&
         completedToDos.map((item) => <p key={item.id}>{item.name}</p>)}
