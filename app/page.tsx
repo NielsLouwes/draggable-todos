@@ -16,26 +16,29 @@ export type TTodos = {
 
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [completedToDos, setCompletedToDos] = useState([]);
+  const [completedToDos, setCompletedToDos] = useState<Todo[]>([]);
   const [userInput, setUserInput] = useState<string>("");
+  const [completedItemsToggle, setCompletedItemsToggle] = useState(false);
 
-  const addTodos = (event) => {
+  const capitalizeFirstLetter = () => {
+    const capitaliseFirstLetter = userInput.charAt(0).toUpperCase();
+    const restOfInput = userInput.slice(1);
+    return `${capitaliseFirstLetter}${restOfInput}`;
+  };
+
+  const addTodos = (event: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
     if (!userInput.trim()) return;
 
-    const sanitisedInput = () => {
-      const capitaliseFirstLetter = userInput.charAt(0).toUpperCase();
-      const restOfInput = userInput.slice(1);
-      return `${capitaliseFirstLetter}${restOfInput}`;
-    };
-
     const newTodoObject = {
       id: new Date().getTime(),
-      name: sanitisedInput(),
+      name: capitalizeFirstLetter(),
     };
 
     setTodos([...todos, newTodoObject]);
     setUserInput("");
+
+    localStorage.setItem("todos", JSON.stringify(todos));
   };
 
   const deleteToDo = (id: number) => {
@@ -72,13 +75,26 @@ export default function Home() {
           completeToDo={completeToDo}
         />
       ) : (
-        <p className="mt-10 text-sm text-slate-400 ">
+        <p className="mt-10 text-sm text-slate-400 mb-8 ">
           This list is empty, please add your todos
         </p>
       )}
-      <div className="text-sm border-solid border-2 border-gray p-1 cursor-pointer">
-        Completed items
-      </div>
+      {completedToDos.length > 0 ? (
+        <button
+          className="text-sm border-solid border-2 border-gray cursor-pointer p-2"
+          onClick={() => {
+            if (completedItemsToggle) {
+              setCompletedItemsToggle(false);
+            } else {
+              setCompletedItemsToggle(true);
+            }
+          }}
+        >
+          Completed items
+        </button>
+      ) : null}
+      {completedItemsToggle &&
+        completedToDos.map((item) => <p key={item.id}>{item.name}</p>)}
     </main>
   );
 }
